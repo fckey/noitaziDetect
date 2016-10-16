@@ -1,5 +1,4 @@
-#!/usr/bin/python
- 
+# -*- coding: utf-8 -*-
 ###############################################################################
 # Name      : ObjectMarker.py
 # Author    : Python implementation: sqshemet 
@@ -10,14 +9,15 @@
 # Usage     : python ObjectMarker.py outputfile inputdirectory
 ###############################################################################
  
-import cv2 as cv
+import cv
+import cv2
 import sys
 import os
 import glob
  
 IMG_SIZE = (300,300)
 IMG_CHAN = 3
-IMG_DEPTH = cv.IPL_DEPTH_8U
+IMG_DEPTH = cv2.IPL_DEPTH_8U
 current_image = cv.CreateImage(IMG_SIZE, IMG_DEPTH, IMG_CHAN)
 image2 = cv.CreateImage(IMG_SIZE, IMG_DEPTH, IMG_CHAN)
 has_roi = False
@@ -98,25 +98,25 @@ def redraw() :
     global cur_mouse_x
     global cur_mouse_y
     #Redraw ROI selection
-    image2 = cv.CloneImage(current_image)
+    image2 = cv2.CloneImage(current_image)
 
     # redraw old rect
     pen_width = 4
     if rect_table.has_key(current_img_file_name) :
         rects_in_table = rect_table[current_img_file_name]
         for r in rects_in_table :
-            cv.Rectangle(image2, (r[0], r[1]), (r[0] + r[2], r[1] + r[3]), cv.CV_RGB(0,255,0),pen_width)
+            cv2.Rectangle(image2, (r[0], r[1]), (r[0] + r[2], r[1] + r[3]), cv2.CV_RGB(0,255,0),pen_width)
 
     # redraw new rect
     if has_roi :
-        cv.Rectangle(image2, (roi_x0, roi_y0), (cur_mouse_x, cur_mouse_y), cv.CV_RGB(255,0,255),pen_width)
+        cv2.Rectangle(image2, (roi_x0, roi_y0), (cur_mouse_x, cur_mouse_y), cv2.CV_RGB(255,0,255),pen_width)
 
     # draw background
     if current_img_file_name in background_files :
-        cv.Line(image2, (0, 0), (image2.width, image2.height), cv.CV_RGB(255, 0, 0))
-        cv.Line(image2, (0, image2.height), (image2.width, 0), cv.CV_RGB(255, 0, 0))
+        cv2.Line(image2, (0, 0), (image2.width, image2.height), cv2.CV_RGB(255, 0, 0))
+        cv2.Line(image2, (0, image2.height), (image2.width, 0), cv2.CV_RGB(255, 0, 0))
 
-    cv.ShowImage(window_name, image2)
+    cv2.ShowImage(window_name, image2)
 
 def remove_rect(x, y):
     if not rect_table.has_key(current_img_file_name) :
@@ -154,12 +154,12 @@ def on_mouse(event, x, y, flag, params):
     cur_mouse_x = x
     cur_mouse_y = y
 
-    if (event == cv.CV_EVENT_LBUTTONDOWN):
+    if (event == cv2.CV_EVENT_LBUTTONDOWN):
         draging = True
         has_roi = True
         roi_x0 = x
         roi_y0 = y
-    elif (event == cv.CV_EVENT_LBUTTONUP):
+    elif (event == cv2.CV_EVENT_LBUTTONUP):
         draging = False
         has_roi = True
         roi_x1 = x
@@ -171,11 +171,11 @@ def on_mouse(event, x, y, flag, params):
         if roi_y1 < roi_y0 :
             roi_y0, roi_y1 = roi_y1, roi_y0 
 
-    elif (event == cv.CV_EVENT_RBUTTONDOWN):
+    elif (event == cv2.CV_EVENT_RBUTTONDOWN):
         clear_roi()
         redraw()
 
-    elif (event == cv.CV_EVENT_MOUSEMOVE):
+    elif (event == cv2.CV_EVENT_MOUSEMOVE):
         if draging:
             redraw()
  
@@ -200,8 +200,8 @@ def main():
     files.sort()
  
     # init GUI
-    cv.NamedWindow(window_name, 1)
-    cv.SetMouseCallback(window_name, on_mouse, None)
+    cv2.NamedWindow(window_name, 1)
+    cv2.SetMouseCallback(window_name, on_mouse, None)
  
     sys.stderr.write("Opening directory...")
     # init output of rectangles to the info file
@@ -218,13 +218,13 @@ def main():
         sys.stderr.write("Loading current_image (%d/%d) %s...\n" % (current_file_index + 1, len(files), current_img_file_name))
  
         try: 
-            current_image = cv.LoadImage(current_img_file_name, 1)
+            current_image = cv2.LoadImage(current_img_file_name, 1)
         except IOError: 
             sys.stderr.write("Failed to load current_image %s.\n" % current_img_file_name)
             return -1
  
         #  Work on current current_image
-        #cv.ShowImage(window_name, current_image)
+        #cv2.ShowImage(window_name, current_image)
         redraw()
 
         # Need to figure out waitkey returns.
@@ -237,7 +237,7 @@ def main():
         # <q>     = 113     exit program
         # <s>     = 115     save rect table
         # <x>     = 136     skip image
-        iKey = cv.WaitKey(0) % 255
+        iKey = cv2.WaitKey(0) % 255
         # This is ugly, but is actually a simplification of the C++.
         #sys.stderr.write(str(iKey) + '\n')
         if draging :
@@ -254,7 +254,7 @@ def main():
                 current_file_index = 0
             clear_roi()
         elif iKey == 113:
-            cv.DestroyWindow(window_name)
+            cv2.DestroyWindow(window_name)
             return 0
         elif iKey == 97:
             rect_table.setdefault(current_img_file_name, set()).add((roi_x0, roi_y0, roi_x1 - roi_x0, roi_y1 - roi_y0)) 

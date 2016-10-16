@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 #################################################################
 # Name              : haar_positive_file_creator.py
 # Version           : 1.0a
@@ -13,7 +15,6 @@
 import cv2
 import sys
 import glob
-
 # global variables
 
 debug = 1
